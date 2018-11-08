@@ -1,5 +1,17 @@
-# Gulp and Babel Example
+# Technical Test
 
-A simple gulp script to get you started with a new ES6 project.
+Technical Test for Pulselive
 
-If you want more information check out the [Let's Learn ES6](https://youtu.be/xFbi2lhHm04?list=PL57atfCFqj2h5fpdZD-doGEIs0NZxeJTX) video on it. 
+## Getting Started
+
+Run npm install.
+
+Run npm update.
+
+Run npm start.
+
+### Improvements/Extension of code
+
+I would create my own nodejs/express backend that would serve an api behind a proxy.
+
+I would host images on a cloud service i.e AWS S3 to ensure scalability.

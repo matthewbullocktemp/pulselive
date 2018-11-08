@@ -1,0 +1,75 @@
+@import '../modules/all';
+
+.card {
+  max-width: 300px;
+  margin: auto;
+  @include font(helvetica, regular);
+  color: $pulse-font;
+  &__header {
+    display: flex;
+    position: relative;
+    &--padded{
+      padding: 16px 14px;
+    }
+  }
+  &__image {
+    background: url('../img/pattern.png') no-repeat top right;
+    img {
+      display: inherit;
+      max-width: 150px;
+    }
+  }
+  &__content {
+
+  }
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    background-color: $pulse-red;
+    padding: 20px 16px;
+    &__header {
+
+      &__title {
+        color: $white;
+        h2{
+          @include font(helvetica, regular);
+          font-size: $font-size-xl;
+          margin-bottom: 10px;
+        }
+        h4{
+          @include font(helvetica, light);
+          font-size: $font-size-l;
+          margin-bottom: 20px;
+        }
+      }
+
+      &__icon {
+        position: absolute;
+        right: 0px;
+        bottom: 45px;
+
+        img {
+          width: 85px;
+          height: 85px;
+          border-radius: 50%;
+          background: url('../img/badges_sprite.png');
+          background-size: 985px;
+        }
+      }
+    }
+  }
+  &__list {
+    list-style: none;
+    &__item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      margin: 2px 0px;
+      background-color: $grey;
+      font-size: $font-size-l;
+      &--right{
+        @include font(helvetica, bold);
+      }
+    }
+  }
+}

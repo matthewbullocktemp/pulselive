@@ -1,29 +1,99 @@
 'use strict'
-// Require gulp
+
 const gulp = require('gulp');
-// Require gulp-babel
 const babel = require('gulp-babel');
+const webserver = require('gulp-webserver');
+const autoprefixer = require('gulp-autoprefixer');
+const csso = require('gulp-csso');
+const del = require('del');
+const htmlmin = require('gulp-htmlmin');
+const runSequence = require('run-sequence');
+const sass = require('gulp-sass');
+const uglify = require('gulp-uglify');
 
-// Create an es6 task
-gulp.task('es6', () => {
-	// Return gulp.src with the src set to our src folder
-	// we return here do that we indicate to gulp that this task is async
-	return gulp.src('src/app.js')
-		// We pipe the source into babel
+
+// Set the browser that you want to supoprt
+const AUTOPREFIXER_BROWSERS = [
+  'ie >= 10',
+  'ie_mob >= 10',
+  'ff >= 30',
+  'chrome >= 34',
+  'safari >= 7',
+  'opera >= 23',
+  'ios >= 7',
+  'android >= 4.4',
+  'bb >= 10'
+];
+
+gulp.task('webserver', function() {
+  gulp.src('dist')
+    .pipe(webserver({
+      fallback: 'index.html'
+    }));
+});
+
+// Gulp task to minify CSS files
+gulp.task('styles', () => {
+  return gulp.src('./src/sass/main.scss')
+    // Compile SASS files
+    .pipe(sass({
+      outputStyle: 'nested',
+      precision: 10,
+      includePaths: ['.'],
+      onError: console.error.bind(console, 'Sass error:')
+    }))
+    // Auto-prefix css styles for cross browser compatibility
+    .pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
+    // Minify the file
+    .pipe(csso())
+    // Output
+    .pipe(gulp.dest('./dist/css'))
+});
+
+// Gulp task to minify JavaScript files
+gulp.task('scripts', () => {
+  return gulp.src('./src/js/**/*.js')
 		.pipe(babel({
-			// We need to tell babel to use the babel-preset-es2015
-			presets: ['es2015']
-		}))
-		// We then pipe that into gulp.dest to set a final destination
-		// In this case a build folder
-		.pipe(gulp.dest('build'));
-});
-// Create a default gulp task, this lets us type gulp into the terminal
-// The ['es6'] tells gulp what task or tasks to run right away. 
-gulp.task('default', ['es6'],() => {
-	// Tell gulp to watch for file changes on src/app.js
-	// run the es6 task when it changes!
-	gulp.watch('src/app.js',['es6'])
+					presets: ['es2015']
+				}))
+    // Minify the file
+    .pipe(uglify())
+    // Output
+    .pipe(gulp.dest('./dist/js'))
 });
 
+gulp.task('images', () => {
+  return gulp.src('./src/img/*.{png,gif,jpg}')
+    .pipe(gulp.dest('./dist/img'))
+});
 
+// Gulp task to minify HTML files
+gulp.task('pages', () => {
+  return gulp.src(['./src/**/*.html'])
+    .pipe(htmlmin({
+      collapseWhitespace: true,
+      removeComments: true
+    }))
+    .pipe(gulp.dest('./dist'));
+});
+
+// Clean output directory
+gulp.task('clean', () => del(['dist']));
+
+gulp.task('watch', () => {
+	gulp.watch('src/js/**/*.js', ['scripts']);
+	gulp.watch('src/sass/**/*.scss', ['styles']);
+	gulp.watch('src/img/*.{png,gif,jpg}', ['images']);
+	gulp.watch('src/*.html', ['pages']);
+});
+
+gulp.task('default', ['clean'], () => {
+	runSequence(
+    'styles',
+    'scripts',
+		'images',
+    'pages',
+		'webserver',
+		'watch'
+  );
+});

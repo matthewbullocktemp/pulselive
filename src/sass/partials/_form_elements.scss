@@ -1,0 +1,30 @@
+select {
+  width: 100%;
+  padding: 5px 35px 5px 10px;
+  font-size: 16px;
+  height: 34px;
+  border-radius: 0px;
+  background: #eaeaea url('https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_keyboard_arrow_down_48px-128.png') no-repeat;
+  background-color: #eaeaea;
+  background-size: 20px;
+  background-position:  right 10px center;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+}
+
+
+/* IE workaround */
+
+select::-ms-expand {
+    display: none; /* remove default arrow in IE 10 and 11 */
+}
+
+/* target IE9 < */
+@media screen and (min-width:0\0) {
+    select {
+        background:none\9;
+        padding: 5px\9;
+    }
+}
