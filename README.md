@@ -4,6 +4,8 @@ Technical Test for Pulselive
 
 ## Getting Started
 
+Clone repo to local environment.
+
 Run npm install.
 
 Run npm update.
