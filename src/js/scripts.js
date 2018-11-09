@@ -1,12 +1,7 @@
 'use strict';
 
-window.onload = () => {
-    PlayerWidget.init()
-};
-
 const PlayerWidget = {
-
-	init: () => {
+  init: () => {
     PlayerWidget.getPlayers()
   },
 
@@ -16,17 +11,13 @@ const PlayerWidget = {
 		.then((res) => res.json()) // Transform the data into json
 		.then((data) => {
 			const { players } = data
-			console.log(players)
 			PlayerWidget.createSelectOption()
-
 			//for every player in res, create an option element
 			players.map(player => {
 				PlayerWidget.createOptionList(player)
 			})
-
 			//attaches handler to each option
 			PlayerWidget.addEventHandler(players)
-
 		})
 		.catch((error) => {
 		  console.log(error)
@@ -39,11 +30,13 @@ const PlayerWidget = {
 			const activePlayer = players.filter(({player} , i) => {
 				return player.id == val
 			})
-			const card = document.getElementById('card-container')
-			if(card){
+
+      const card = document.getElementById('card-container')
+      if(card){
 				PlayerWidget.deleteCard(card)
 			}
-			PlayerWidget.createStatsCard(activePlayer)
+
+      PlayerWidget.createStatsCard(activePlayer)
 		});
 	},
 
@@ -66,54 +59,37 @@ const PlayerWidget = {
 
 	createStatsCard: (playerData) => {
 		const { player , stats } = playerData[0]
-		const appearances = stats.filter(({name} , i) => {
-			return name == "appearances"
-		})
-		const goals = stats.filter(({name} , i) => {
-			return name == "goals"
-		})
-		const assists = stats.filter(({name} , i) => {
-			return name == "goal_assist"
-		})
-		const mins = stats.filter(({name} , i) => {
-			return name == "mins_played"
-		})
-		const fwdPass = stats.filter(({name} , i) => {
-			return name == "fwd_pass"
-		})
-		const backPass = stats.filter(({name} , i) => {
-			return name == "backward_pass"
-		})
 
-		//round both to 2 decimal place
-		const goalsPerMatch =  (goals[0].value / appearances[0].value).toFixed(2)
-		const passesPerMinute = ((fwdPass[0].value + backPass[0].value) / mins[0].value).toFixed(2)
+    //convert stats arr to obj for easier use in template
+    const statsObj = {};
+    stats.forEach((item) => {statsObj[item.name] = item; });
+
+    //round both to 2 decimal place
+		const goalsPerMatch =  (statsObj.goals.value / statsObj.appearances.value).toFixed(2)
+		const passesPerMinute = ((statsObj.fwd_pass.value + statsObj.backward_pass.value) / statsObj.mins_played.value).toFixed(2)
 
 		const statsCard = `
 				<div id="card-container" class="card__content">
-
 					<div class="card__image">
 							<img src="/img/${player.id}.png" alt="${player.name.first} ${player.name.last} Profile Image">
 					</div>
-
 					<div class="card__meta">
 						<div class="card__header">
 								<div class="card__meta__header__title">
 									<h2>${player.name.first} ${player.name.last}</h2>
-									<h4>${player.info.positionInfo ? player.info.positionInfo : ''}</h4>
+									${player.info.positionInfo ? '<h4>' + player.info.positionInfo + '</h4>' : ''}
 								</div>
 								<div class="card__meta__header__icon">
 											<img id="${player.currentTeam.shortName.replace(/\s/g,'-').toLowerCase()}" src="img/trans.png" alt="${player.currentTeam.name} Shield Image">
 								</div>
 						</div>
-
 						<div class="card__meta__content">
 							<ul class="card__list">
-								${appearances.length ? '<li class="card__list__item"><span class="card__list__item--left">Appearances</span><span class="card__list__item--right">' + appearances[0].value + "</span></li>" : ''}
-								${goals.length ? '<li class="card__list__item"><span class="card__list__item--left">Goals</span><span class="card__list__item--right">' + goals[0].value + "</span></li>" : ''}
-								${assists.length ? '<li class="card__list__item"><span class="card__list__item--left">Assists</span><span class="card__list__item--right">' + assists[0].value + "</span></li>" : ''}
-								${goalsPerMatch.length ? '<li class="card__list__item"><span class="card__list__item--left">Goals per match</span><span class="card__list__item--right">' + goalsPerMatch + "</span></li>" : ''}
-								${passesPerMinute.length ? '<li class="card__list__item"><span class="card__list__item--left">Passes per minute</span><span class="card__list__item--right">' + passesPerMinute + "</span></li>" : ''}
+                ${statsObj.appearances ? '<li class="card__list__item"><span class="card__list__item--left">Appearances</span><span class="card__list__item--right">' + statsObj.appearances.value + "</span></li>" : ''}
+              	${statsObj.goals ? '<li class="card__list__item"><span class="card__list__item--left">Goals</span><span class="card__list__item--right">' + statsObj.goals.value + "</span></li>" : ''}
+                ${statsObj.goal_assist ? '<li class="card__list__item"><span class="card__list__item--left">Assists</span><span class="card__list__item--right">' + statsObj.goal_assist.value + "</span></li>" : ''}
+                ${goalsPerMatch ? '<li class="card__list__item"><span class="card__list__item--left">Goals per match</span><span class="card__list__item--right">' + goalsPerMatch + "</span></li>" : ''}
+              	${passesPerMinute ? '<li class="card__list__item"><span class="card__list__item--left">Passes per minute</span><span class="card__list__item--right">' + passesPerMinute + "</span></li>" : ''}
 							</ul>
 						</div>
 					</div>
@@ -125,3 +101,5 @@ const PlayerWidget = {
 		card.remove()
 	}
 };
+
+PlayerWidget.init()
